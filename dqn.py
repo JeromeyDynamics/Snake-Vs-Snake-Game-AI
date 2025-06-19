@@ -14,7 +14,8 @@ class DQN(nn.Module):
         
         super(DQN, self).__init__()
         self.fc1 = nn.Linear(input_size, hidden_size)
-        self.fc2 = nn.Linear(hidden_size, output_size)
+        self.fc2 = nn.Linear(hidden_size, hidden_size)
+        self.fc3 = nn.Linear(hidden_size, output_size)
 
     def forward(self, x):
         """Computes the forward pass of the DQN model.
@@ -26,8 +27,12 @@ class DQN(nn.Module):
             torch.tensor: The output vector representing the q values.
         """
         
+        if len(x.shape) == 1:
+            x = x.unsqueeze(0)  # Add batch dimension if needed
+        
         x = torch.relu(self.fc1(x))
-        x = self.fc2(x)
+        x = torch.relu(self.fc2(x))
+        x = self.fc3(x)
         return x
 
 def select_action(state, q_network, epsilon):
@@ -68,9 +73,9 @@ def update_network(q_network, target_network, optimizer, memory):
         None
     """
 
-    if len(memory) < 64:
+    if len(memory) < 128:  # Increased batch size
         return
-    batch = memory.sample(64)
+    batch = memory.sample(128)  # Larger batch for efficiency
     states, actions, rewards, next_states, dones = zip(*batch)
 
     states = torch.tensor(states, dtype=torch.float32)
