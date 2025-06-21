@@ -3,6 +3,7 @@ from snake import SnakeGame
 from dqn import DQN, select_action, update_network
 from memory import ReplayMemory
 import time
+import pickle
 
 # Pretraining parameters
 EPISODES = 5000  # Increased for better learning
@@ -12,21 +13,24 @@ UPDATE_FREQ = 16  # Update every 16 steps for much faster training
 BATCH_SIZE = 128  # Larger batch size for efficiency
 SAVE_PATH1 = 'snake_agent1.pth'
 SAVE_PATH2 = 'snake_agent2.pth'
+MEMORY_PATH1 = 'memory1.pkl'
+MEMORY_PATH2 = 'memory2.pkl'
+TRAINING_STATE_PATH = 'training_state.pkl'
 INFO_PATH = 'ai_info.txt'
 
 # Initialize game and AI components
 game = SnakeGame(render=False)
 memory1 = ReplayMemory(10000)
-q_network1 = DQN(13, 256, 4)  # Updated state size and larger hidden layer
-target_network1 = DQN(13, 256, 4)
+q_network1 = DQN(13, 128, 4)  # Smaller hidden layer for better generalization
+target_network1 = DQN(13, 128, 4)
 target_network1.load_state_dict(q_network1.state_dict())
-optimizer1 = torch.optim.Adam(q_network1.parameters(), lr=0.001)
+optimizer1 = torch.optim.Adam(q_network1.parameters(), lr=0.0001)  # Lower learning rate for stability
 epsilon1 = 1.0
 memory2 = ReplayMemory(10000)
-q_network2 = DQN(13, 256, 4)  # Updated state size and larger hidden layer
-target_network2 = DQN(13, 256, 4)
+q_network2 = DQN(13, 128, 4)  # Smaller hidden layer for better generalization
+target_network2 = DQN(13, 128, 4)
 target_network2.load_state_dict(q_network2.state_dict())
-optimizer2 = torch.optim.Adam(q_network2.parameters(), lr=0.001)
+optimizer2 = torch.optim.Adam(q_network2.parameters(), lr=0.0001)  # Lower learning rate for stability
 epsilon2 = 1.0
 
 # Overwrite ai_info.txt at the start
@@ -74,9 +78,9 @@ for episode in range(EPISODES):
         
         # Slower epsilon decay
         if epsilon1 > 0.01:
-            epsilon1 *= 0.9995
+            epsilon1 *= 0.9999
         if epsilon2 > 0.01:
-            epsilon2 *= 0.9995
+            epsilon2 *= 0.9999
     
     episode_lengths.append(steps)
     reward_history1.append(total_reward1)
@@ -100,5 +104,19 @@ for episode in range(EPISODES):
 # Save the trained models
 torch.save(q_network1.state_dict(), SAVE_PATH1)
 torch.save(q_network2.state_dict(), SAVE_PATH2)
+
+# Save the memory buffers
+memory1.save(MEMORY_PATH1)
+memory2.save(MEMORY_PATH2)
+
+# Save training state (epsilon values and step count)
+training_state = {
+    'epsilon1': epsilon1,
+    'epsilon2': epsilon2,
+    'step_count': step_count
+}
+with open(TRAINING_STATE_PATH, 'wb') as f:
+    pickle.dump(training_state, f)
+
 total_time = time.time() - start_time
-print(f"Pretraining complete in {total_time:.1f} seconds. Models saved.")
+print(f"Pretraining complete in {total_time:.1f} seconds. Models, memory, and training state saved.")

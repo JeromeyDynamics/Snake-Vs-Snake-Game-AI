@@ -1,5 +1,6 @@
 import random
 from collections import deque
+import pickle
 
 class ReplayMemory:
     def __init__(self, capacity):
@@ -52,3 +53,29 @@ class ReplayMemory:
         """
 
         return len(self.memory)
+    
+    def save(self, filename):
+        """Saves the memory buffer to a file.
+        
+        Parameters
+        ----------
+        filename : str
+            The filename to save the memory to.
+        """
+        with open(filename, 'wb') as f:
+            pickle.dump(list(self.memory), f)
+    
+    def load(self, filename):
+        """Loads the memory buffer from a file.
+        
+        Parameters
+        ----------
+        filename : str
+            The filename to load the memory from.
+        """
+        try:
+            with open(filename, 'rb') as f:
+                memory_list = pickle.load(f)
+                self.memory = deque(memory_list, maxlen=self.memory.maxlen)
+        except FileNotFoundError:
+            print(f"Memory file {filename} not found. Starting with empty memory.")

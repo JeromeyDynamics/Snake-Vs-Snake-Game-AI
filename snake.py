@@ -178,37 +178,37 @@ class SnakeGame:
         grow1 = False
         grow2 = False
 
-        # Apple collection with better rewards
+        # Apple collection with normalized rewards
         both_on_apple = new_head1 == self.apple_pos and new_head2 == self.apple_pos
         if both_on_apple:
             self.apple_pos = self.get_random_grid_position(exclude=self.snake1_pos + self.snake2_pos)
             self.score1 += 1
             self.score2 += 1
-            reward1 = 10.0  # Good reward for getting food (even if both get it)
-            reward2 = 10.0
+            reward1 = 0.5  # Normalized reward for getting food (even if both get it)
+            reward2 = 0.5
             grow1 = True
             grow2 = True
         elif new_head1 == self.apple_pos:
             self.apple_pos = self.get_random_grid_position(exclude=self.snake1_pos + self.snake2_pos)
             self.score1 += 1
-            reward1 = 30.0  # Good reward for getting food individually
+            reward1 = 1.0  # Normalized reward for getting food individually
             grow1 = True
         elif new_head2 == self.apple_pos:
             self.apple_pos = self.get_random_grid_position(exclude=self.snake1_pos + self.snake2_pos)
             self.score2 += 1
-            reward2 = 30.0  # Good reward for getting food individually
+            reward2 = 1.0  # Normalized reward for getting food individually
             grow2 = True
         else:
             # Small reward for moving closer to food
             old_dist1 = math.sqrt((old_head1[0] - self.apple_pos[0])**2 + (old_head1[1] - self.apple_pos[1])**2)
             new_dist1 = math.sqrt((new_head1[0] - self.apple_pos[0])**2 + (new_head1[1] - self.apple_pos[1])**2)
             if new_dist1 < old_dist1:
-                reward1 += 0.05  # Smaller reward for moving closer to food
+                reward1 += 0.02  # Smaller normalized reward for moving closer to food
             
             old_dist2 = math.sqrt((old_head2[0] - self.apple_pos[0])**2 + (old_head2[1] - self.apple_pos[1])**2)
             new_dist2 = math.sqrt((new_head2[0] - self.apple_pos[0])**2 + (new_head2[1] - self.apple_pos[1])**2)
             if new_dist2 < old_dist2:
-                reward2 += 0.05
+                reward2 += 0.02
 
         # Only grow if ate apple, otherwise pop tail
         if not grow1:
@@ -232,22 +232,22 @@ class SnakeGame:
         if heads_collide:
             self.score1 += 1
             self.score2 += 1
-            reward1 = 2.0  # Small positive reward for collision (both survive)
-            reward2 = 2.0
+            reward1 = 0.1  # Small neutral reward for collision (both survive)
+            reward2 = 0.1
             self.done1 = True
             self.done2 = True
         # If snake 1 hits snake 2's body, snake 1 loses, snake 2 gets a point
         elif head1_in_body2 or head1_in_self or out1:
             self.score2 += 1
-            reward1 = -5.0  # Moderate negative reward for death
-            reward2 = 3.0   # Small positive reward for winning
+            reward1 = -1.0  # Normalized negative reward for death
+            reward2 = 0.3   # Normalized positive reward for winning
             self.done1 = True
             self.done2 = True
         # If snake 2 hits snake 1's body, snake 2 loses, snake 1 gets a point
         elif head2_in_body1 or head2_in_self or out2:
             self.score1 += 1
-            reward1 = 3.0   # Small positive reward for winning
-            reward2 = -5.0  # Moderate negative reward for death
+            reward1 = 0.3   # Normalized positive reward for winning
+            reward2 = -1.0  # Normalized negative reward for death
             self.done1 = True
             self.done2 = True
 

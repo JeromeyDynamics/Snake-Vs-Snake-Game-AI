@@ -7,9 +7,9 @@ class DQN(nn.Module):
         """Initializes the DQN model with the given sizes.
 
         Args:
-            input_size (int): The size of the input state vector.
-            hidden_size (int): The size of the hidden layer.
-            output_size (int): The size of the output vector representing the q values.
+            input_size (int): The size of the input state vector. The DQN will recieve this many (13) pieces of information about the game.
+            hidden_size (int): The size of the hidden layer. The amount of "neurons" (128) that are processing the numbers from the input and outputting new numbers.
+            output_size (int): The size of the output vector representing the q values. The DQN will output 4 numbers each representing the directions that the snake can take: up, down, left, right.
         """
         
         super(DQN, self).__init__()
@@ -28,7 +28,7 @@ class DQN(nn.Module):
         """
         
         if len(x.shape) == 1:
-            x = x.unsqueeze(0)  # Add batch dimension if needed
+            x = x.unsqueeze(0)
         
         x = torch.relu(self.fc1(x))
         x = torch.relu(self.fc2(x))
@@ -91,4 +91,8 @@ def update_network(q_network, target_network, optimizer, memory):
     loss = nn.functional.mse_loss(q_values, targets)
     optimizer.zero_grad()
     loss.backward()
+    
+    # Add gradient clipping to prevent exploding gradients
+    torch.nn.utils.clip_grad_norm_(q_network.parameters(), max_norm=1.0)
+    
     optimizer.step()

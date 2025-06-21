@@ -5,6 +5,7 @@ from memory import ReplayMemory
 import numpy as np
 import torch
 import os
+import pickle
 
 # Initialize game and AI components
 
@@ -12,18 +13,18 @@ game = SnakeGame()
 
 # Agent 1
 memory1 = ReplayMemory(10000)
-q_network1 = DQN(13, 256, 4)
-target_network1 = DQN(13, 256, 4)
+q_network1 = DQN(13, 128, 4)
+target_network1 = DQN(13, 128, 4)
 target_network1.load_state_dict(q_network1.state_dict())
-optimizer1 = torch.optim.Adam(q_network1.parameters(), lr=0.001)
+optimizer1 = torch.optim.Adam(q_network1.parameters(), lr=0.0001)
 epsilon1 = 1.0
 
 # Agent 2
 memory2 = ReplayMemory(10000)
-q_network2 = DQN(13, 256, 4)
-target_network2 = DQN(13, 256, 4)
+q_network2 = DQN(13, 128, 4)
+target_network2 = DQN(13, 128, 4)
 target_network2.load_state_dict(q_network2.state_dict())
-optimizer2 = torch.optim.Adam(q_network2.parameters(), lr=0.001)
+optimizer2 = torch.optim.Adam(q_network2.parameters(), lr=0.0001)
 epsilon2 = 1.0
 
 MAX_STEPS = 500
@@ -32,30 +33,6 @@ UPDATE_FREQ = 4
 step_count = 0
 reward_history1 = []
 reward_history2 = []
-
-def reset_agents():
-    global q_network1, target_network1, optimizer1, memory1, epsilon1
-    global q_network2, target_network2, optimizer2, memory2, epsilon2
-    q_network1 = DQN(13, 256, 4)
-    target_network1 = DQN(13, 256, 4)
-    target_network1.load_state_dict(q_network1.state_dict())
-    optimizer1 = torch.optim.Adam(q_network1.parameters(), lr=0.001)
-    memory1 = ReplayMemory(10000)
-    epsilon1 = 1.0
-    q_network2 = DQN(13, 256, 4)
-    target_network2 = DQN(13, 256, 4)
-    target_network2.load_state_dict(q_network2.state_dict())
-    optimizer2 = torch.optim.Adam(q_network2.parameters(), lr=0.001)
-    memory2 = ReplayMemory(10000)
-    epsilon2 = 1.0
-    # Reset scores
-    game.score1 = 0
-    game.score2 = 0
-    # Clear ai_info.txt
-    if os.path.exists('ai_info.txt'):
-        with open('ai_info.txt', 'w') as f:
-            f.write('')
-    print('Agents, scores, and ai_info.txt reset.')
 
 # Load pretrained models if available
 if os.path.exists('snake_agent1.pth'):
@@ -66,6 +43,23 @@ if os.path.exists('snake_agent2.pth'):
     q_network2.load_state_dict(torch.load('snake_agent2.pth'))
     target_network2.load_state_dict(q_network2.state_dict())
     print('Loaded pretrained weights for Agent 2')
+
+# Load memory buffers if available
+if os.path.exists('memory1.pkl'):
+    memory1.load('memory1.pkl')
+    print(f'Loaded memory for Agent 1 ({len(memory1)} experiences)')
+if os.path.exists('memory2.pkl'):
+    memory2.load('memory2.pkl')
+    print(f'Loaded memory for Agent 2 ({len(memory2)} experiences)')
+
+# Load training state if available
+if os.path.exists('training_state.pkl'):
+    with open('training_state.pkl', 'rb') as f:
+        training_state = pickle.load(f)
+    epsilon1 = training_state['epsilon1']
+    epsilon2 = training_state['epsilon2']
+    step_count = training_state['step_count']
+    print(f'Loaded training state: epsilon1={epsilon1:.4f}, epsilon2={epsilon2:.4f}, step_count={step_count}')
 
 def main():
     global epsilon1, epsilon2, step_count
@@ -82,10 +76,6 @@ def main():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_r:
-                        game.reset()
-                        reset_agents()
             state1 = game.get_state(1)
             state2 = game.get_state(2)
             action1 = select_action(state1, q_network1, epsilon1)
@@ -106,9 +96,9 @@ def main():
                 target_network1.load_state_dict(q_network1.state_dict())
                 target_network2.load_state_dict(q_network2.state_dict())
             if epsilon1 > 0.01:
-                epsilon1 *= 0.9995
+                epsilon1 *= 0.9999
             if epsilon2 > 0.01:
-                epsilon2 *= 0.9995
+                epsilon2 *= 0.9999
         reward_history1.append(total_reward1)
         reward_history2.append(total_reward2)
         episode += 1
