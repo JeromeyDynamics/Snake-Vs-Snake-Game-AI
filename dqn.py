@@ -2,6 +2,8 @@ import torch
 import torch.nn as nn
 import random
 
+#the DQN class defines a neural network that akes in the current state of the game as input and outputs a set of Q-values for each of the 4 directions the snake could move in
+#this lets the AI evaluate and choose the best move at each step of the way while playing the game
 class DQN(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
         """Initializes the DQN model with the given sizes.
