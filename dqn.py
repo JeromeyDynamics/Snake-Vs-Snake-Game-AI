@@ -94,6 +94,7 @@ def select_action(state, q_network, epsilon):
 
 #this one is like the select_action function but it is used to update the "brain" of the snake with the gradients being actually used here to do so
 #used in the pretrain.py file to update the "brain" of the snake in training to make it better at moving towards the fruits
+#one of the parameters is the memory, which is the ReplayMemory class from the memory.py file which is a memory buffer that can store and manage the past game experiences of the AI, so that it can learn from them later
 def update_network(q_network, target_network, optimizer, memory):
     """
     Updates the Q-network using a batch of experiences from replay memory.
