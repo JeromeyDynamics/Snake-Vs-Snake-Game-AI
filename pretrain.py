@@ -1,22 +1,22 @@
 import torch
-from snake import SnakeGame
-from dqn import DQN, select_action, update_network
-from memory import ReplayMemory
+from src.snake import SnakeGame
+from src.dqn import DQN, select_action, update_network
+from src.memory import ReplayMemory
 import time
 import pickle
 
 # Pretraining parameters
-EPISODES = 10000  # Increased for better learning
+EPISODES = 100000  # Increased for better learning
 MAX_STEPS = 200  # Reduced for faster episodes
 TARGET_UPDATE_FREQ = 200  # Less frequent target updates
 UPDATE_FREQ = 16  # Update every 16 steps for much faster training
 BATCH_SIZE = 128  # Larger batch size for efficiency
-SAVE_PATH1 = 'snake_agent1.pth'
-SAVE_PATH2 = 'snake_agent2.pth'
-MEMORY_PATH1 = 'memory1.pkl'
-MEMORY_PATH2 = 'memory2.pkl'
-TRAINING_STATE_PATH = 'training_state.pkl'
-INFO_PATH = 'ai_info.txt'
+SAVE_PATH1 = 'data/snake_agent1.pth'
+SAVE_PATH2 = 'data/snake_agent2.pth'
+MEMORY_PATH1 = 'data/memory1.pkl'
+MEMORY_PATH2 = 'data/memory2.pkl'
+TRAINING_STATE_PATH = 'data/training_state.pkl'
+INFO_PATH = 'info/ai_info.txt'
 
 # Initialize game and AI components
 game = SnakeGame(render=False)

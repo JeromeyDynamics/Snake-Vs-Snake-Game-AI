@@ -1,7 +1,7 @@
 import pygame
-from snake import SnakeGame
-from dqn import DQN, select_action, update_network
-from memory import ReplayMemory
+from src.snake import SnakeGame
+from src.dqn import DQN, select_action, update_network
+from src.memory import ReplayMemory
 import numpy as np
 import torch
 import os
@@ -35,26 +35,26 @@ reward_history1 = []
 reward_history2 = []
 
 # Load pretrained models if available
-if os.path.exists('snake_agent1.pth'):
-    q_network1.load_state_dict(torch.load('snake_agent1.pth'))
+if os.path.exists('data/snake_agent1.pth'):
+    q_network1.load_state_dict(torch.load('data/snake_agent1.pth'))
     target_network1.load_state_dict(q_network1.state_dict())
     print('Loaded pretrained weights for Agent 1')
-if os.path.exists('snake_agent2.pth'):
-    q_network2.load_state_dict(torch.load('snake_agent2.pth'))
+if os.path.exists('data/snake_agent2.pth'):
+    q_network2.load_state_dict(torch.load('data/snake_agent2.pth'))
     target_network2.load_state_dict(q_network2.state_dict())
     print('Loaded pretrained weights for Agent 2')
 
 # Load memory buffers if available
-if os.path.exists('memory1.pkl'):
-    memory1.load('memory1.pkl')
+if os.path.exists('data/memory1.pkl'):
+    memory1.load('data/memory1.pkl')
     print(f'Loaded memory for Agent 1 ({len(memory1)} experiences)')
-if os.path.exists('memory2.pkl'):
-    memory2.load('memory2.pkl')
+if os.path.exists('data/memory2.pkl'):
+    memory2.load('data/memory2.pkl')
     print(f'Loaded memory for Agent 2 ({len(memory2)} experiences)')
 
 # Load training state if available
-if os.path.exists('training_state.pkl'):
-    with open('training_state.pkl', 'rb') as f:
+if os.path.exists('data/training_state.pkl'):
+    with open('data/training_state.pkl', 'rb') as f:
         training_state = pickle.load(f)
     epsilon1 = training_state['epsilon1']
     epsilon2 = training_state['epsilon2']
