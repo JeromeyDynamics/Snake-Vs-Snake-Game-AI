@@ -78,7 +78,7 @@ class ReplayMemory:
 
         #saves the memory buffer to a pkl file
         #uses the pickle module to serialize the memory buffer and save it to a file
-        #this lets you pause and resume training 
+        #this lets you pause and resume training because it is saved to a file
         with open(filename, 'wb') as f:
             pickle.dump(list(self.memory), f)
     
@@ -91,8 +91,13 @@ class ReplayMemory:
             The filename to load the memory from.
         """
         try:
+            #attemps to open the file given by the filename parameter
             with open(filename, 'rb') as f:
+                #loads the memory buffer from the file into this list variable
                 memory_list = pickle.load(f)
+                #this creates a new deque object from the memory_list variable which holds the experiences from the file
+                #the max length of the deque object is the same as the current memory buffer so that the memory buffer can be swapped out without losing any experiences
                 self.memory = deque(memory_list, maxlen=self.memory.maxlen)
         except FileNotFoundError:
+            #if the file is not found where the filename parameter says it is, then it will give an error which will print the following message
             print(f"Memory file {filename} not found. Starting with empty memory.")
