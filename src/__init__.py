@@ -2,6 +2,6 @@
 Snake AI package initialization.
 """
 
-from .snake_new import SnakeGame
+from .snake import SnakeGame
 
 __all__ = ['SnakeGame'] 

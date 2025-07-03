@@ -1,5 +1,5 @@
 import pygame
-from src.snake import SnakeGame
+from src import SnakeGame
 from src.dqn import DQN, select_action, update_network
 from src.memory import ReplayMemory
 import numpy as np

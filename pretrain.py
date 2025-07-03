@@ -1,12 +1,12 @@
 import torch
-from src.snake import SnakeGame
+from src import SnakeGame
 from src.dqn import DQN, select_action, update_network
 from src.memory import ReplayMemory
 import time
 import pickle
 
 # Pretraining parameters
-EPISODES = 100000  # Increased for better learning
+EPISODES = 10000  # Increased for better learning
 MAX_STEPS = 200  # Reduced for faster episodes
 TARGET_UPDATE_FREQ = 200  # Less frequent target updates
 UPDATE_FREQ = 16  # Update every 16 steps for much faster training
