@@ -39,33 +39,33 @@ class SnakeGame:
         Returns:
             tuple: A tuple containing the new states, rewards, and done flags for both snakes.
         """
-        # Update directions
+        #updates directions
         self.game_logic.update_directions(action1, action2)
         
-        # Move snakes
+        #moves snakes
         old_head1, old_head2, new_head1, new_head2 = self.game_logic.move_snakes()
         
-        # Handle apple collection
+        #handles apple collection
         reward1, reward2, grow1, grow2 = self.game_logic.handle_apple_collection(new_head1, new_head2)
         
-        # Calculate distance-based rewards
+        #calculates distance-based rewards
         reward1, reward2 = self.game_logic.calculate_distance_rewards(
             old_head1, old_head2, new_head1, new_head2, reward1, reward2
         )
         
-        # Handle snake growth
+        #handles the growth of the snake
         self.game_logic.handle_snake_growth(grow1, grow2)
         
-        # Detect and handle collisions
+        #detects and handles collisions with the snakes
         collisions = self.game_logic.detect_collisions(new_head1, new_head2)
         reward1, reward2 = self.game_logic.handle_collisions(collisions, reward1, reward2)
         
-        # Render if enabled
+        #renders if it is enabled
         if self.render:
             self.renderer.draw(self.game_state)
             self.renderer.tick()
         
-        # Get final states
+        #gets the final states
         state1 = self.get_state(1)
         state2 = self.get_state(2)
         

@@ -1,6 +1,6 @@
 import os
 
-# Paths to all the snake player data files
+#paths to all the snake player data files
 FILES_TO_DELETE = [
     'data/memory1.pkl',      # Agent 1's replay memory
     'data/memory2.pkl',      # Agent 2's replay memory

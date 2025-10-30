@@ -49,20 +49,11 @@ class GameState:
     
     def get_state(self, snake_num):
         """
-        Returns the current state of the game as a list of integers.
-
-        The state includes the snake's head position, apple position, 
-        direction vector, and danger indicators. The direction vector 
-        represents the current direction of the snake as a one-hot encoded 
-        list with four elements corresponding to right, left, up, and down 
-        respectively. The danger indicators are binary values representing 
-        whether the next position in a given direction (up, down, left, 
-        right) is occupied by the snake's body, indicating a potential 
-        collision.
+        Returns the current state of the game as a list of integers determining what each thing is doing
 
         Returns:
-            list: A list containing the snake's head position (x, y), apple 
-            position (x, y), direction vector, and danger indicators.
+            list: a list containing the snake's head position (x, y), apple 
+            position (x, y), direction vector, and the danger indicators.
         """
         if snake_num == 1:
             head_x, head_y = self.snake1_pos[0]
@@ -77,10 +68,10 @@ class GameState:
         
         apple_x, apple_y = self.apple_pos
         
-        # Calculate distance to apple
+        #calculates the distance to the apple
         distance_to_apple = math.sqrt((head_x - apple_x)**2 + (head_y - apple_y)**2)
         
-        # Direction vector
+        #the direction vector
         direction_vec = [0, 0, 0, 0]
         if direction == 'right':
             direction_vec[0] = 1
@@ -91,13 +82,13 @@ class GameState:
         elif direction == 'down':
             direction_vec[3] = 1
         
-        # Danger indicators (more detailed)
+        #danger indicators
         danger_up = int((head_x, head_y - GRID_SIZE) in snake_pos or (head_x, head_y - GRID_SIZE) in other_snake or head_y - GRID_SIZE < 0)
         danger_down = int((head_x, head_y + GRID_SIZE) in snake_pos or (head_x, head_y + GRID_SIZE) in other_snake or head_y + GRID_SIZE >= SCREEN_HEIGHT)
         danger_left = int((head_x - GRID_SIZE, head_y) in snake_pos or (head_x - GRID_SIZE, head_y) in other_snake or head_x - GRID_SIZE < 0)
         danger_right = int((head_x + GRID_SIZE, head_y) in snake_pos or (head_x + GRID_SIZE, head_y) in other_snake or head_x + GRID_SIZE >= SCREEN_WIDTH)
         
-        # Normalize positions to smaller values
+        #normalizing positions by the size of the screen
         head_x_norm = head_x / SCREEN_WIDTH
         head_y_norm = head_y / SCREEN_HEIGHT
         apple_x_norm = apple_x / SCREEN_WIDTH

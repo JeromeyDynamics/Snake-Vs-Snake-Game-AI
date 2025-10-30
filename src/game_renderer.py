@@ -1,5 +1,5 @@
 """
-Pygame renderer for the Snake AI game.
+pygame renderer for the Snake AI game
 """
 
 import pygame
@@ -7,7 +7,7 @@ from .game_config import *
 
 
 class GameRenderer:
-    """Handles all rendering functionality for the game."""
+    """Handles all of the rendering functionality for the game"""
     
     def __init__(self, render=True):
         self.render = render
@@ -21,11 +21,6 @@ class GameRenderer:
     def draw(self, game_state):
         """
         Renders the current game state onto the display screen.
-
-        This includes clearing the screen, drawing the snakes at their current positions 
-        with different colors, drawing the apple with a red rectangle, and displaying 
-        the current scores at the top-left and top-right corners. Finally, it updates the display 
-        to reflect these changes.
         """
         if not self.render:
             return
@@ -55,6 +50,6 @@ class GameRenderer:
         pygame.display.flip()
     
     def tick(self):
-        """Advances the game clock by one frame."""
+        """Advances the game clock by by setting a tick speed"""
         if self.render:
             self.clock.tick(FPS) 
